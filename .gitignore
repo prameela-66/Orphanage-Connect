@@ -1,0 +1,10 @@
+﻿.env
+*.sqlite3
+__pycache__/
+*.py[cod]
+media/
+staticfiles/
+djangoenv/
+venv/
+.venv/
+.vscode/

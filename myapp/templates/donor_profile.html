@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+
+<!-- Left Profile Card -->
+<div class="col-md-4">
+  <div class="card w-100 shadow-lg border-0 rounded-4 overflow-hidden position-relative" 
+       style="background: linear-gradient(145deg, #ffffff, #f0f0ff); transition: transform 0.3s;">
+
+    <!-- Top Gradient Header -->
+    <div class="position-relative p-4 text-center" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">
+      {% if profile.photo %}
+        <img src="{{ profile.photo.url }}" 
+             class="rounded-circle border border-3 border-white shadow-sm" 
+             style="width:130px; height:130px; object-fit:cover; object-position:center; margin-top:50px;">
+      {% else %}
+        <div class="rounded-circle d-flex align-items-center justify-content-center border border-3 border-white shadow-sm"
+             style="width:130px;height:130px; background: linear-gradient(135deg,#6c5ce7,#a29bfe); margin-top:50px;">
+          <i class="bi bi-person-fill text-white fs-1"></i>
+        </div>
+      {% endif %}
+
+      <!-- Small Edit Icon -->
+      <button class="btn btn-light btn-sm rounded-circle position-absolute bottom-0 end-0 border shadow-sm" 
+              data-bs-toggle="modal" data-bs-target="#editProfileModal" 
+              style="width:32px; height:32px;">
+        <i class="bi bi-pencil-fill text-primary"></i>
+      </button>
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body text-center pt-5 px-4">
+      <h4 class="fw-bold text-capitalize">{{ user.username }}</h4>
+      <p class="text-muted mb-3">Donor</p>
+
+      <div class="text-start">
+        <p><i class="bi bi-envelope text-primary me-2"></i>📧{{ user.email }}</p>
+        <p><i class="bi bi-telephone text-success me-2"></i>📞{{ profile.phone|default:"Not provided" }}</p>
+        <p><i class="bi bi-calendar-event text-info me-2"></i>📅Joined {{ user.date_joined|date:"d M, Y" }}</p>
+      </div>
+
+      <hr class="my-3">
+
+      <h4 class="text-success fw-bold">₹{{ total_donations }}</h4>
+      <p class="text-muted">Total Donations</p>
+
+      <!-- Edit Button -->
+      <button class="btn btn-primary w-100 mt-3 py-2 fw-bold text-white" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+        <i class="bi bi-pencil-square me-1"></i> Edit Profile
+      </button>
+    </div>
+  </div>
+</div>
+<!----->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow-lg">
+      <div class="modal-header bg-primary text-white rounded-top-4">
+        <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form method="POST" enctype="multipart/form-data" action="{% url 'edit_profile' %}">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Phone</label>
+            <input type="text" name="phone" class="form-control" value="{{ profile.phone }}">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Address</label>
+            <textarea name="address" class="form-control" rows="3">{{ profile.address }}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Profile Photo</label>
+            <input type="file" name="photo" class="form-control">
+          </div>
+
+          <div class="text-end">
+            <button type="submit" class="btn btn-success px-4">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hover Animation -->
+<style>
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(108, 92, 231, 0.3);
+}
+.proof-img {
+  object-fit: cover;
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+}
+</style>
+
+<!-- Donation Table -->
+<hr class="my-4">
+<h4 class="fw-bold text-center mb-3 text-primary">Donation History</h4>
+{% if donations %}
+  <div class="table-responsive shadow rounded p-3" style="background: #f8f9fa;">
+    <table class="table table-hover align-middle text-center">
+      <thead class="bg-primary text-white rounded-top">
+        <tr>
+          <th class="py-3">Orphanage</th>
+          <th class="py-3">Amount (₹)</th>
+          <th class="py-3">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for donation in donations %}
+          <tr class="align-middle" style="transition: all 0.3s;">
+            <td class="fw-bold text-primary">{{ donation.orphanage.name_of_orphanage }}</td>
+            <td class="text-success fw-semibold">₹{{ donation.amount }}</td>
+            <td class="text-secondary">{{ donation.date|date:"d M, Y" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-center text-muted fst-italic py-4">No donations yet. Be the first to contribute!</p>
+{% endif %}
+
+<!-- Proofs Section (Unique Needs Only) -->
+<h4 class="fw-bold text-center mb-3 text-primary mt-5">Proofs for My Donations</h4>
+
+{% comment %}
+  Get unique needs that the donor has donated to.
+  In your views.py, you can pass this:
+  donated_needs = Need.objects.filter(donation__donor=donor_profile).distinct().prefetch_related('proof_set')
+{% endcomment %}
+
+{% for need in donated_needs %}
+  {% if need.proof_set.all %}
+    <h5 class="text-secondary mb-2">{{ need.title }} - {{ need.orphanage.name_of_orphanage }}</h5>
+    <div class="row g-3 mb-4">
+      {% for proof in need.proof_set.all %}
+        <div class="col-md-3 col-sm-4 col-6">
+          <div class="card shadow-sm rounded-3 overflow-hidden">
+            {% if proof.receipt %}
+              <img src="{{ proof.receipt.url }}" class="img-fluid proof-img" alt="Proof">
+            {% endif %}
+            <div class="card-body p-2 text-center">
+              <p class="small text-muted mb-1">{{ proof.description|default:"No description" }}</p>
+              <small class="text-muted">{{ proof.date_uploaded|date:"d M, Y" }}</small>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% empty %}
+  <p class="text-center text-muted fst-italic py-3">No proofs uploaded yet.</p>
+{% endfor %}
+
+{% endblock %}

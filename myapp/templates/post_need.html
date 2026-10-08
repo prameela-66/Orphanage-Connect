@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Post Need{% endblock %}
+{% block content %}
+<h2 class="fw-bold mb-4 text-center">Post a New Need</h2>
+<form method="POST" class="card p-4 shadow-sm mx-auto" style="max-width:600px;">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label>Title</label>
+    <input type="text" name="title" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label>Description</label>
+    <textarea name="description" class="form-control" rows="4" required></textarea>
+  </div>
+  <div class="mb-3">
+    <label>Category</label>
+    <select name="category" class="form-select" required>
+      <option value="Food">Food</option>
+      <option value="Education">Education</option>
+      <option value="Medicine">Medicine</option>
+      <option value="Clothing">Clothing</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label>Amount Required</label>
+    <input type="number" name="amount_required" class="form-control" required>
+  </div>
+  <button type="submit" class="btn btn-primary w-100">Submit Need</button>
+</form>
+{% endblock %}

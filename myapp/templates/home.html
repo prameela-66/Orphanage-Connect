@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <!-- Hero Section -->
+  <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 0.5rem;">
+    <div class="container">
+      <h2 class="mb-3" style="color:white;">Connecting Hearts, Changing Lives</h2>
+      <p class="mb-4">Bridge the gap between orphanages in need and generous donors. Our platform ensures transparency and accountability in every donation, making a real difference in children's lives.</p>
+      <a href="{% url 'donor_register' %}" class="btn btn-outline-primary btn-lg" style="background-color: #007bff; color: white;">Register as Donor</a>
+       <a href="{% url 'orphanage_register' %}" class="btn btn-outline-success btn-lg" style="background-color: #28a745; color: white;">Register as Orphanage</a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="container my-5">
+    <div class="row g-4 text-center">
+      <div class="col-md-4">
+        <div class="card shadow-sm p-4 h-100">
+          <div class="mb-3 d-flex justify-content-center align-items-center mx-auto" style="width: 50px; height: 50px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); border-radius: 50%;">
+            <img src="{% static 'images/icons/orphanage-icon.png' %}" alt="Orphanages" style="width: 24px; height: 24px;">
+          </div>
+          <h5 class="fw-bold">Find Orphanages</h5>
+          <p class="small">Discover orphanages in need and learn about their specific requirements for food, clothing, education, and healthcare.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card shadow-sm p-4 h-100">
+          <div class="mb-3 d-flex justify-content-center align-items-center mx-auto" style="width: 50px; height: 50px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); border-radius: 50%;">
+            <img src="{% static 'images/icons/heart-icon.png' %}" alt="Make a Difference" style="width: 24px; height: 24px;">
+          </div>
+          <h5 class="fw-bold">Make a Difference</h5>
+          <p class="small">Contribute to causes that matter. Every donation, no matter the size, makes a meaningful impact on children's lives.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card shadow-sm p-4 h-100">
+          <div class="mb-3 d-flex justify-content-center align-items-center mx-auto" style="width: 50px; height: 50px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); border-radius: 50%;">
+            <img src="{% static 'images/icons/impact-icon.png' %}" alt="Track Impact" style="width: 24px; height: 24px;">
+          </div>
+          <h5 class="fw-bold">Track Impact</h5>
+          <p class="small">Monitor your contributions and see proof of how your donations are being used to help children in need.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="container mb-5">
+    <div class="card p-4 shadow-sm text-center">
+      <h5 class="mb-4 fw-bold">Platform Statistics</h5>
+      <div class="row text-primary">
+        <div class="col-md-3">
+          <h3>4</h3>
+          <p>Orphanages</p>
+        </div>
+        <div class="col-md-3">
+          <h3>84</h3>
+          <p>Total Donors</p>
+        </div>
+        <div class="col-md-3">
+          <h3>₹1,22,000</h3>
+          <p>Total Donations</p>
+        </div>
+        <div class="col-md-3">
+          <h3>1</h3>
+          <p>Needs Fulfilled</p>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

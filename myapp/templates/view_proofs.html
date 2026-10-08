@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Proofs for {{ need.title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Proofs for "{{ need.title }}"</h2>
+
+    {% if proofs %}
+        <div class="row">
+            {% for proof in proofs %}
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm p-3">
+                        <h5 class="card-title">Uploaded on {{ proof.date_uploaded|date:"M d, Y" }}</h5>
+                        {% if proof.receipt.url %}
+                            {% if proof.receipt.url|lower|endswith:".jpg" or proof.receipt.url|lower|endswith:".png" or proof.receipt.url|lower|endswith:".jpeg" %}
+                                <img src="{{ proof.receipt.url }}" class="img-fluid rounded mb-2" alt="Proof Image">
+                            {% else %}
+                                <a href="{{ proof.receipt.url }}" target="_blank" class="btn btn-primary btn-sm">View Proof Document</a>
+                            {% endif %}
+                        {% endif %}
+                        <p class="mt-2"><strong>Description:</strong> {{ proof.description|default:"No description provided." }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center">
+            No proofs uploaded yet for this need.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

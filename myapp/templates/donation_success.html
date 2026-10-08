@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Donation Successful{% endblock %}
+{% block content %}
+<div class="container text-center my-5">
+  <div class="card mx-auto shadow-sm p-4" style="max-width:500px;">
+    <h3 class="text-success fw-bold mb-3">Donation Successful 🎉</h3>
+    <p>Thank you for your kind support!</p>
+    <hr>
+    <p><strong>Transaction ID:</strong> {{ donation.transaction_id }}</p>
+    <p><strong>Amount:</strong> ₹{{ donation.amount }}</p>
+    <p><strong>Orphanage:</strong> {{ donation.orphanage.name }}</p>
+    <a href="{{ donation.receipt.url }}" class="btn btn-outline-primary mt-3" download>
+      Download Receipt (PDF)
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Orphanage Dashboard{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold">Your Posted Needs</h2>
+  <a href="{% url 'post_need' %}" class="btn btn-primary">Post New Need</a>
+</div>
+
+<div class="row g-4">
+  {% for need in needs %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ need.title }}</h5>
+          <p>{{ need.description|truncatewords:25 }}</p>
+          <p><strong>Amount:</strong> ₹{{ need.amount_required }}</p>
+
+          <!-- ✅ Progress Bar -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <small class="text-muted">Donated: ₹{{ need.amount_received }} / ₹{{ need.amount_required }}</small>
+              <small class="fw-semibold text-success">{{ need.progress_percentage|floatformat:2 }}%</small>
+            </div>
+            <div class="progress" style="height: 10px; border-radius: 5px;">
+              <div class="progress-bar" 
+                   role="progressbar" 
+                   style="width: {{ need.progress_percentage|floatformat:2 }}%; background: linear-gradient(90deg,#3b82f6,#6c63ff);" 
+                   aria-valuenow="{{ need.progress_percentage|floatformat:2 }}" 
+                   aria-valuemin="0" 
+                   aria-valuemax="100">
+              </div>
+            </div>
+          </div>
+
+          <a href="{% url 'upload_proof' need.id %}" class="btn btn-outline-success w-100">Upload Proof</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-center">You haven't posted any needs yet.</p>
+  {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Donate{% endblock %}
+
+{% block content %}
+<h2 class="text-center fw-bold mb-4">Donate to {{ need.orphanage.name_of_orphanage }}</h2>
+
+<form method="POST" class="card p-4 shadow-sm mx-auto" style="max-width:500px;">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label>Need: {{ need.title }}</label>
+  </div>
+  <div class="mb-3">
+    <label>Description:</label>
+    <p>{{ need.description }}</p>
+  </div>
+  <div class="mb-3">
+    <label>Amount Required:</label>
+    <p>₹{{ need.amount_required }}</p>
+  </div>
+  <div class="mb-3">
+    {{ form.amount.label_tag }}
+    {{ form.amount }}
+    {% if form.amount.errors %}
+      <div class="text-danger small">{{ form.amount.errors }}</div>
+    {% endif %}
+  </div>
+  <button type="submit" class="btn btn-success w-100">Donate</button>
+</form>
+{% endblock %}

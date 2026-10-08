@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Orphanage Needs{% endblock %}
+{% block content %}
+<h2 class="text-center mb-4">Orphanage Needs</h2>
+<div class="row">
+  {% for need in needs %}
+  <div class="col-md-6 mb-4">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between">
+        <h5>{{ need.title }}</h5>
+        <span class="badge bg-warning text-dark">{{ need.status }}</span>
+      </div>
+      <p class="small text-muted">{{ need.orphanage.orphanage_name }} — {{ need.orphanage.city }}</p>
+      <p>{{ need.description|truncatechars:180 }}</p>
+      <div class="d-flex align-items-center justify-content-between">
+        <div style="width:70%">
+          <div class="progress mb-2" style="height:8px;">
+            <div class="progress-bar" style="width: {{ need.progress_percent }}%;"></div>
+          </div>
+          <small class="text-muted">₹{{ need.amount_received }} / ₹{{ need.amount_required }}</small>
+        </div>
+        <div>
+          <a href="{% url 'need_detail' need.pk %}" class="btn btn-secondary btn-sm">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

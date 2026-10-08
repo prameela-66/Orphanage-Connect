@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Orphanage Profile{% endblock %}
+{% block content %}
+<h2 class="fw-bold mb-4 text-center">Orphanage Profile</h2>
+
+<form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm mx-auto" style="max-width:700px;">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <div class="mb-3">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}
+        <div class="text-danger small">{{ field.errors }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <button type="submit" class="btn btn-success w-100">Update Profile</button>
+</form>
+{% endblock %}

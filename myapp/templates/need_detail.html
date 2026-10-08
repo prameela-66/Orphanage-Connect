@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}{{ need.title }}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+    <h2>{{ need.title }}</h2>
+    <p class="text-muted">{{ need.orphanage.orphanage_name }} — {{ need.orphanage.city }}</p>
+    <p>{{ need.description }}</p>
+    <h5>Progress</h5>
+    <div class="progress mb-2" style="height:12px;">
+      <div class="progress-bar" style="width: {{ need.progress_percent }}%;"></div>
+    </div>
+    <p>₹{{ need.amount_received }} of ₹{{ need.amount_required }}</p>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h5>Donate</h5>
+      {% if user.is_authenticated and user.is_donor %}
+        <form method="post" action="{% url 'donate' need.id %}">
+          {% csrf_token %}
+          <div class="mb-2">
+            <label>Amount (₹)</label>
+            <input type="number" step="0.01" name="amount" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label>Note (optional)</label>
+            <textarea name="note" class="form-control"></textarea>
+          </div>
+          <button class="btn btn-success w-100">Donate Now (mock)</button>
+        </form>
+      {% else %}
+        <p>Please <a href="{% url 'login' %}">sign in</a> as Donor to donate.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

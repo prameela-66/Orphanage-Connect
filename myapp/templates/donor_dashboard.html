@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Donor Dashboard{% endblock %}
+{% block content %}
+
+<style>
+  /* 💅 Custom Dashboard Styles */
+  .dashboard-header {
+    background: linear-gradient(135deg, #6c63ff, #3b82f6);
+    color: white;
+    padding: 2.5rem 1rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  }
+
+  .dashboard-header h2 {
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .need-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1.25rem;
+    overflow: hidden;
+  }
+
+  .need-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .progress {
+    height: 8px;
+    background-color: #e9ecef;
+  }
+
+  .progress-bar {
+    border-radius: 5px;
+  }
+
+  .proof-img {
+    object-fit: cover;
+    height: 130px;
+  }
+
+  .badge-status {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 1rem;
+  }
+
+  .badge-category {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 1rem;
+    background-color: #e0e7ff;
+    color: #4338ca;
+  }
+</style>
+
+<!-- 🟣 Header Section -->
+<div class="container my-4">
+  <div class="dashboard-header text-center mb-4">
+    <h2 style="color: white;">✨ Orphanage Needs</h2>
+    <p class="lead mt-2 mb-0">Make a difference today by contributing to genuine causes.</p>
+  </div>
+
+  <!-- 🔍 Compact & Minimal Search & Filter Section -->
+  <form method="GET" action="{% url 'donor_dashboard' %}" class="mb-5 mx-auto" style="max-width: 900px;">
+    <!-- Line 1: Search Input + Search Button -->
+    <div class="input-group input-group-lg mb-3 shadow-sm rounded-pill overflow-hidden border">
+      <span class="input-group-text bg-white border-0 ps-3 text-muted">🔍</span>
+      <input 
+        type="text" 
+        name="search" 
+        id="search" 
+        class="form-control bg-white border-0 fs-6 shadow-none" 
+        placeholder="Search by need, location or orphanage..." 
+        value="{{ search_query }}"
+      >
+      <button type="submit" class="btn btn-primary px-4 fw-semibold border-0" style="background: linear-gradient(135deg, #6c63ff, #4f46e5);">
+        Search
+      </button>
+    </div>
+
+    <!-- Line 2: Category Filter (Left) & Clear Button (Right) -->
+    <div class="d-flex justify-content-between align-items-center px-1">
+      <div class="d-flex align-items-center gap-2">
+        <label for="category" class="form-label fw-semibold text-secondary mb-0">Category:</label>
+        <select name="category" id="category" class="form-select form-select-sm border-0 shadow-sm bg-white rounded-pill px-3" style="width: auto; min-width: 170px;" onchange="this.form.submit()">
+          <option value="All" {% if not selected_category or selected_category == 'All' %}selected{% endif %}>All Categories</option>
+          {% for cat in categories %}
+            <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <a href="{% url 'donor_dashboard' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+        <i class="bi bi-x-circle me-1"></i> Clear
+      </a>
+    </div>
+  </form>
+
+  <!-- 🟩 Available Needs Heading -->
+  <div class="text-center mb-4">
+    <h3 class="fw-bold text-dark">Available Needs</h3>
+  </div>
+
+  <!-- 🟩 Needs Grid -->
+  <div class="row g-4">
+    {% for need in needs %}
+    <div class="col-md-6 col-lg-6">
+      <div class="card need-card shadow border-0 h-100">
+        <div class="card-body p-4 d-flex flex-column">
+
+          <!-- Category + Status -->
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge badge-category">
+              <i class="bi bi-tag-fill me-1"></i>{{ need.category }}
+            </span>
+            {% if need.is_fulfilled %}
+              <span class="badge bg-success badge-status">Fulfilled</span>
+            {% else %}
+              <span class="badge bg-warning text-dark badge-status">Active</span>
+            {% endif %}
+          </div>
+
+          <!-- Title -->
+          <h5 class="fw-bold text-primary mb-2">{{ need.title }}</h5>
+
+          <!-- Orphanage Info -->
+          <p class="text-muted small mb-1">
+            <i class="bi bi-house-door-fill me-1 text-primary"></i>
+            <strong>{{ need.orphanage.name_of_orphanage }}</strong>
+          </p>
+          <p class="text-muted small mb-1">
+            <i class="bi bi-geo-alt-fill me-1 text-danger"></i>{{ need.orphanage.location }}
+          </p>
+          <p class="text-muted small mb-1">
+            <i class="bi bi-envelope-fill me-1 text-info"></i>{{ need.orphanage.email }}
+          </p>
+          <p class="text-muted small mb-3">
+            <i class="bi bi-telephone-fill me-1 text-success"></i>{{ need.orphanage.phone_number }}
+          </p>
+
+          <p class="mb-3 flex-grow-1">{{ need.description|truncatewords:25 }}</p>
+
+          <!-- Progress Section -->
+          <div class="mt-auto">
+            <div class="d-flex justify-content-between mb-1">
+              <small class="text-muted">{{ need.donors_count }} donors</small>
+              <small class="fw-semibold text-primary">₹{{ need.amount_received }} / ₹{{ need.amount_required }}</small>
+            </div>
+            <div class="progress mb-3">
+              <div class="progress-bar"
+                style="width: {{ need.progress_percentage|floatformat:2 }}%;
+                       background: linear-gradient(90deg, #3b82f6, #6c63ff);
+                       transition: width 0.6s ease;">
+              </div>
+            </div>
+
+            <!-- Proofs Section -->
+            <div class="mt-3">
+              <h6 class="fw-bold text-primary">🧾 Proofs & Updates</h6>
+              {% if need.id in donated_need_ids %}
+                {% if need.proof_set.all %}
+                  <div class="row g-2">
+                    {% for proof in need.proof_set.all %}
+                      <div class="col-6">
+                        <div class="card shadow-sm">
+                          {% if proof.receipt %}
+                            <img src="{{ proof.receipt.url }}" class="img-fluid rounded proof-img" alt="Proof">
+                          {% endif %}
+                          <div class="p-2">
+                            <p class="small text-muted mb-1">{{ proof.description }}</p>
+                            <small class="text-muted">{{ proof.date_uploaded|date:"M d, Y" }}</small>
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <p class="text-muted small mb-0">No proofs uploaded yet.</p>
+                {% endif %}
+              {% else %}
+                <p class="text-muted small mb-0">Proofs are visible only to donors who contributed to this need.</p>
+              {% endif %}
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <a href="{% url 'need_details' need.id %}" class="btn btn-outline-primary px-4 rounded-pill">
+                <i class="bi bi-eye me-1"></i> View Details
+              </a>
+              {% if need.is_fulfilled %}
+                <button class="btn btn-success rounded-pill px-4" disabled>
+                  <i class="bi bi-check-circle-fill me-1"></i> Fulfilled
+                </button>
+              {% else %}
+                <a href="{% url 'donate' need.id %}" class="btn btn-success rounded-pill px-4">
+                  <i class="bi bi-heart-fill me-1"></i> Donate Now
+                </a>
+              {% endif %}
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {% empty %}
+      <div class="col-12 text-center py-5">
+        <div class="p-4 bg-light rounded-4 shadow-sm display-6 text-muted fs-5">
+          <i class="bi bi-search d-block mb-3 text-secondary fs-1"></i>
+          No orphanage needs matching your search and filter criteria.
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

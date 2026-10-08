@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Donor Profile</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            {{ user_form.as_p }}
+        </div>
+        <div class="form-group mb-3">
+            {{ profile_form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{% url 'donor_profile' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

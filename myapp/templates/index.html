@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 class="fw-bold">Connecting Hearts, Changing Lives</h1>
+    <p class="lead">Bridge the gap between orphanages in need and generous donors.</p>
+    <a href="{% url 'needs' %}" class="btn btn-lg btn-success">View Needs</a>
+</div>
+
+<div class="row text-center mb-5">
+    <div class="col-md-4"><h3>👥 Find Orphanages</h3><p>Discover orphanages and their needs.</p></div>
+    <div class="col-md-4"><h3>❤️ Make a Difference</h3><p>Every donation changes lives.</p></div>
+    <div class="col-md-4"><h3>📊 Track Proof</h3><p>See proof of how your donations are used.</p></div>
+</div>
+
+<h2 class="text-center mb-4">Platform Statistics</h2>
+<div class="row text-center">
+    <div class="col-md-3"><h3>{{ orphanages_count }}</h3><p>Orphanages</p></div>
+    <div class="col-md-3"><h3>{{ donors_count }}</h3><p>Donors</p></div>
+    <div class="col-md-3"><h3>₹{{ total_donations|intcomma }}</h3><p>Total Donations</p></div>
+    <div class="col-md-3"><h3>{{ needs_fulfilled_count }}</h3><p>Needs Fulfilled</p></div>
+</div>
+{% endblock %}
